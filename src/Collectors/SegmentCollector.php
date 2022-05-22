@@ -111,6 +111,10 @@ class SegmentCollector
 
     public function hasAddedSegment(string $name): bool
     {
+        if (\is_null($this->segments)) {
+            return false;
+        }
+
         return \array_key_exists($name, $this->segments);
     }
 
@@ -124,7 +128,7 @@ class SegmentCollector
         $submitterClass = config('xray.submitter');
         $tracer = $this->tracer();
 
-        if (Auth::check()) {
+        if (app()->bound(Auth::class) && Auth::check()) {
             $tracer->setUser((string) Auth::user()->getAuthIdentifier());
         }
         $tracer->end()
@@ -137,7 +141,7 @@ class SegmentCollector
         $submitterClass = config('xray.submitter');
         $tracer = $this->tracer();
 
-        if (Auth::check()) {
+        if (app()->bound(Auth::class) && Auth::check()) {
             $tracer->setUser((string) Auth::user()->getAuthIdentifier());
         }
         $tracer->end()->submit(new $submitterClass());
